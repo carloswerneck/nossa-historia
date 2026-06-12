@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\carlo\\\\Downloads\" | Where-Object { $_.Name -match 'nossa|hist|site|\\\\.zip|\\\\.html' } | Select-Object Name, Length, LastWriteTime)",
+      "PowerShell(gh --version)",
+      "PowerShell(gh auth status)"
+    ]
+  }
+}

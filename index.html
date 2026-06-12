@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nossa História · Crie um presente digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1C0A14;
+  --bg2:#2E1020;
+  --card:#3A1528;
+  --rose:#FF5C8A;
+  --rose-soft:#FFA8C2;
+  --cream:#FFF1E6;
+  --muted:rgba(255,241,230,.62);
+  --gold:#E8B84B;
+  --gold-deep:#B9882B;
+  --ok:#7BD88F;
+  --err:#FF7A7A;
+  --display:'Fraunces',Georgia,serif;
+  --body:'Sora',system-ui,-apple-system,sans-serif;
+  --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(1200px 800px at 70% -10%,var(--bg2) 0%,var(--bg) 60%);
+  color:var(--cream);
+  font-family:var(--body);
+  font-weight:300;
+  line-height:1.6;
+  overflow-x:hidden;
+  min-height:100dvh;
+}
+#hearts-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg-heart{position:absolute;bottom:-40px;font-size:18px;opacity:0;animation:floatUp linear forwards}
+@keyframes floatUp{
+  0%{transform:translateY(0) rotate(0);opacity:0}
+  10%{opacity:.18}
+  90%{opacity:.12}
+  100%{transform:translateY(-110vh) rotate(40deg);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .bg-heart{display:none}
+  *{animation-duration:.001s!important;transition-duration:.001s!important}
+}
+#app{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:28px 20px 60px;min-height:100dvh;display:flex;flex-direction:column}
+.screen{animation:fadeIn .5s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- type ---------- */
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.15;letter-spacing:-.01em}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.22em;color:var(--rose-soft);font-weight:600;margin-bottom:14px}
+.hero-title{font-size:clamp(34px,7vw,52px)}
+.hero-title em{font-style:italic;color:var(--rose)}
+.lead{color:var(--muted);margin-top:14px;font-size:16px;max-width:46ch}
+
+/* ---------- forms ---------- */
+.card{background:linear-gradient(160deg,rgba(255,92,138,.07),rgba(255,255,255,.02));border:1px solid rgba(255,168,194,.18);border-radius:var(--radius);padding:22px;margin-top:22px}
+.card h3{font-size:19px;margin-bottom:4px;color:var(--rose-soft)}
+.card .hint{font-size:13px;color:var(--muted);margin-bottom:14px}
+label{display:block;font-size:13px;font-weight:600;color:var(--rose-soft);margin:14px 0 6px;letter-spacing:.02em}
+input[type=text],input[type=email],input[type=tel],input[type=date],textarea{
+  width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(255,241,230,.16);
+  border-radius:12px;padding:12px 14px;color:var(--cream);font-family:var(--body);
+  font-size:15px;outline:none;transition:border-color .2s;
+}
+input:focus,textarea:focus{border-color:var(--rose)}
+textarea{resize:vertical;min-height:70px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+.opt-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.opt-row input[type=text]{flex:1}
+.opt-row input[type=radio]{accent-color:var(--rose);width:18px;height:18px;flex-shrink:0;cursor:pointer}
+.radio-hint{font-size:11px;color:var(--muted);margin-top:6px}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--body);font-weight:600;font-size:16px;
+  padding:14px 28px;border-radius:999px;border:none;cursor:pointer;
+  transition:transform .15s,box-shadow .15s;text-decoration:none;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--rose),#E0436F);color:#fff;box-shadow:0 8px 24px rgba(255,92,138,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(255,92,138,.45)}
+.btn-ghost{background:transparent;color:var(--rose-soft);border:1px solid rgba(255,168,194,.4)}
+.btn-ghost:hover{border-color:var(--rose)}
+.btn-block{width:100%;margin-top:22px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.field-error{color:var(--err);font-size:13px;margin-top:10px;display:none}
+
+/* ---------- link result ---------- */
+.link-box{background:rgba(0,0,0,.35);border:1px dashed rgba(232,184,75,.5);border-radius:12px;padding:14px;margin-top:16px;word-break:break-all;font-size:13px;color:var(--gold)}
+.copy-feedback{color:var(--ok);font-size:13px;margin-top:8px;display:none}
+
+/* ---------- proposal screen ---------- */
+.proposal{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;min-height:70dvh}
+.big-heart{
+  font-size:clamp(70px,18vw,120px);
+  animation:beat 1.4s ease-in-out infinite;
+  filter:drop-shadow(0 0 40px rgba(255,92,138,.5));
+  margin-bottom:18px;
+}
+@keyframes beat{0%,100%{transform:scale(1)}12%{transform:scale(1.12)}24%{transform:scale(1)}36%{transform:scale(1.08)}48%{transform:scale(1)}}
+.proposal h1{font-size:clamp(28px,6.4vw,44px);max-width:18ch}
+.proposal .tease{min-height:26px;margin-top:14px;color:var(--rose-soft);font-style:italic;font-family:var(--display);font-size:17px}
+.btn-pair{display:flex;gap:18px;margin-top:30px;position:relative}
+#btn-nao{position:relative;transition:left .18s ease,top .18s ease}
+#btn-nao.flee{position:fixed;z-index:50}
+
+/* ---------- quiz ---------- */
+.quiz-progress{font-size:13px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.quiz-q{font-family:var(--display);font-size:clamp(22px,5vw,30px);font-weight:600;margin-bottom:22px}
+.quiz-opt{
+  display:block;width:100%;text-align:left;margin-top:12px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,241,230,.16);
+  color:var(--cream);border-radius:14px;padding:15px 18px;font-size:15px;
+  font-family:var(--body);cursor:pointer;transition:all .2s;
+}
+.quiz-opt:hover{border-color:var(--rose);background:rgba(255,92,138,.08)}
+.quiz-opt.correct{border-color:var(--ok);background:rgba(123,216,143,.12)}
+.quiz-opt.wrong{border-color:var(--err);background:rgba(255,122,122,.1)}
+.quiz-feedback{margin-top:16px;font-style:italic;color:var(--rose-soft);min-height:24px}
+.score-big{font-family:var(--display);font-size:clamp(48px,14vw,84px);color:var(--rose);line-height:1}
+
+/* ---------- scratch ---------- */
+.scratch-wrap{position:relative;margin:26px auto 0;max-width:420px;border-radius:var(--radius);overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.5)}
+.scratch-prize{
+  background:linear-gradient(150deg,#4A1B33,#2E1020);
+  padding:46px 26px;text-align:center;min-height:230px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+}
+.scratch-prize .prize-text{font-family:var(--display);font-size:clamp(20px,5vw,26px);font-weight:600;color:var(--gold)}
+#scratch-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.scratch-wrap.revealed #scratch-canvas{opacity:0;transition:opacity .8s;pointer-events:none}
+
+/* ---------- wrapped ---------- */
+.wrapped{flex:1;display:flex;flex-direction:column;min-height:80dvh}
+.story-bars{display:flex;gap:6px;margin-bottom:26px}
+.story-bars span{flex:1;height:3px;border-radius:3px;background:rgba(255,241,230,.2);overflow:hidden;position:relative}
+.story-bars span.done::after,.story-bars span.active::after{content:'';position:absolute;inset:0;background:var(--rose)}
+.story-bars span.active::after{animation:fillBar .4s ease both}
+@keyframes fillBar{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+.wrapped-slide{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;cursor:pointer;padding:10px 0 40px}
+.wrapped-slide .eyebrow{margin-bottom:18px}
+.wrapped-big{font-family:var(--display);font-size:clamp(36px,9vw,64px);font-weight:700;color:var(--rose);line-height:1.05}
+.wrapped-mid{font-family:var(--display);font-size:clamp(24px,6vw,38px);font-weight:600;margin-top:8px}
+.wrapped-sub{color:var(--muted);margin-top:16px;font-size:15px}
+.tap-hint{color:var(--muted);font-size:12px;text-align:center;letter-spacing:.14em;text-transform:uppercase;padding-bottom:8px}
+
+/* ---------- final / CTA ---------- */
+.made-by{margin-top:34px;padding-top:22px;border-top:1px solid rgba(255,241,230,.12);text-align:center}
+.made-by p{font-size:13px;color:var(--muted)}
+.confetti-heart{position:fixed;z-index:100;pointer-events:none;animation:confetti 1.6s ease-out forwards}
+@keyframes confetti{
+  0%{transform:translate(0,0) scale(.6) rotate(0);opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) scale(1.2) rotate(var(--rot));opacity:0}
+}
+.center{text-align:center}
+.mt{margin-top:22px}
+footer.builder-footer{margin-top:40px;text-align:center;font-size:12px;color:var(--muted)}
+
+/* ---------- anúncio Flow TV ---------- */
+.ad-pill{
+  display:inline-flex;align-items:center;gap:9px;margin-top:14px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  color:var(--cream);text-decoration:none;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(232,184,75,.35);
+  transition:all .25s;
+}
+.ad-pill:hover{border-color:var(--gold);background:rgba(232,184,75,.12);transform:translateY(-1px);box-shadow:0 6px 18px rgba(232,184,75,.18)}
+.ad-pill .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold);animation:pulse 2.2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.ad-pill small{font-weight:400;color:var(--muted);font-size:9px;letter-spacing:.14em;text-transform:uppercase;margin-left:2px}
+</style>
+</head>
+<body>
+<div id="hearts-bg"></div>
+<main id="app"></main>
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO DE ENVIO DE DADOS
+   Todas as informações preenchidas no formulário são enviadas
+   para este webhook quando o link é gerado.
+===================================================================== */
+const CONFIG = {
+  LEAD_ENDPOINT: "https://webhook.whatchat.app.br/webhook/sistema-vatentines-day",
+  AD_URL: "https://flow.tv.br"
+};
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+
+function enc(obj){ return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))); }
+function dec(str){ try{ return JSON.parse(decodeURIComponent(escape(atob(str)))); }catch(e){ return null; } }
+function esc(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+function sendLead(payload){
+  payload = Object.assign({origem:'nossa-historia',criado_em:new Date().toISOString()}, payload);
+  if(!CONFIG.LEAD_ENDPOINT){ console.log('💌 Dados capturados:',payload); return Promise.resolve(); }
+  const body = JSON.stringify(payload);
+  return fetch(CONFIG.LEAD_ENDPOINT,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body
+  }).catch(()=>
+    /* fallback: alguns webhooks bloqueiam CORS; no-cors entrega mesmo assim */
+    fetch(CONFIG.LEAD_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body}).catch(()=>{})
+  );
+}
+
+/* ---------- ambient hearts ---------- */
+(function ambient(){
+  const box = $('#hearts-bg');
+  const glyphs = ['💗','💘','💞','🤍','💖'];
+  setInterval(()=>{
+    if(document.hidden) return;
+    const h = document.createElement('span');
+    h.className='bg-heart';
+    h.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
+    h.style.left = Math.random()*100+'vw';
+    h.style.fontSize = (12+Math.random()*16)+'px';
+    h.style.animationDuration = (9+Math.random()*8)+'s';
+    box.appendChild(h);
+    setTimeout(()=>h.remove(),18000);
+  },1700);
+})();
+
+function heartBurst(x,y){
+  for(let i=0;i<16;i++){
+    const s=document.createElement('span');
+    s.className='confetti-heart';
+    s.textContent=['💗','💖','✨','💘'][i%4];
+    s.style.left=x+'px'; s.style.top=y+'px';
+    s.style.setProperty('--dx',(Math.random()*320-160)+'px');
+    s.style.setProperty('--dy',(Math.random()*-280-60)+'px');
+    s.style.setProperty('--rot',(Math.random()*360-180)+'deg');
+    s.style.fontSize=(14+Math.random()*18)+'px';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),1700);
+  }
+}
+
+/* =====================================================================
+   MODO CRIADOR
+===================================================================== */
+function renderBuilder(){
+  document.title = 'Nossa História · Crie um presente digital';
+  app.innerHTML = `
+  <div class="screen">
+    <p class="eyebrow">Dia dos Namorados</p>
+    <h1 class="hero-title">O presente que nenhuma loja <em>vende</em></h1>
+    <p class="lead">Em 2 minutos, você cria uma experiência digital única para quem ama: um pedido impossível de recusar, um quiz da relação, uma raspadinha com surpresa e a retrospectiva de vocês. Tudo dentro de um link — pronto para emocionar hoje.</p>
+
+    <div class="card">
+      <h3>Sobre você</h3>
+      <p class="hint">Para enviarmos seu link, novidades e suporte pelo WhatsApp.</p>
+      <div class="row2">
+        <div><label for="f-lead-nome">Seu nome</label><input type="text" id="f-lead-nome" placeholder="Ana Silva"></div>
+        <div><label for="f-lead-email">Seu e-mail</label><input type="email" id="f-lead-email" placeholder="ana@email.com"></div>
+      </div>
+      <label for="f-lead-tel">Seu WhatsApp / telefone</label>
+      <input type="tel" id="f-lead-tel" placeholder="(11) 98765-4321" inputmode="tel">
+    </div>
+
+    <div class="card">
+      <h3>O casal</h3>
+      <p class="hint">Quem ama e quem vai receber o presente.</p>
+      <div class="row2">
+        <div><label for="f-de">Seu nome ou apelido (de)</label><input type="text" id="f-de" placeholder="Ana"></div>
+        <div><label for="f-para">Nome de quem você ama (para)</label><input type="text" id="f-para" placeholder="Bruno"></div>
+      </div>
+      <label for="f-data">Quando tudo começou</label>
+      <input type="date" id="f-data">
+    </div>
+
+    <div class="card">
+      <h3>1 · O pedido irrecusável</h3>
+      <p class="hint">A pergunta que abre a experiência. O botão "Não" vai fugir do mouse. 😏</p>
+      <label for="f-pedido">Pergunta</label>
+      <input type="text" id="f-pedido" value="Você quer ser meu amor para sempre?">
+    </div>
+
+    <div class="card">
+      <h3>2 · Quiz do casal</h3>
+      <p class="hint">3 perguntas para testar a memória. Marque a bolinha da resposta certa.</p>
+      ${[1,2,3].map(n=>`
+        <label for="f-q${n}p">Pergunta ${n}</label>
+        <input type="text" id="f-q${n}p" placeholder="${['Onde foi nosso primeiro encontro?','Qual é a minha comida favorita?','Qual apelido eu mais uso com você?'][n-1]}">
+        ${[0,1,2].map(o=>`
+          <div class="opt-row">
+            <input type="radio" name="q${n}c" value="${o}" ${o===0?'checked':''} aria-label="Resposta correta da pergunta ${n}, opção ${o+1}">
+            <input type="text" id="f-q${n}o${o}" placeholder="Alternativa ${o+1}">
+          </div>`).join('')}
+        <p class="radio-hint">⭕ = resposta correta</p>
+      `).join('')}
+    </div>
+
+    <div class="card">
+      <h3>3 · Raspadinha surpresa</h3>
+      <p class="hint">O que aparece quando a pessoa raspar a tela.</p>
+      <label for="f-premio">Prêmio ou mensagem</label>
+      <textarea id="f-premio" placeholder="Você ganhou um jantar surpresa no sábado! 🍝✨"></textarea>
+    </div>
+
+    <div class="card">
+      <h3>4 · Retrospectiva do casal</h3>
+      <p class="hint">Os destaques da história de vocês, em estilo "Wrapped".</p>
+      <label for="f-musica">A música de vocês</label>
+      <input type="text" id="f-musica" placeholder="Evidências — Chitãozinho & Xororó">
+      <label for="f-lugar">Lugar favorito juntos</label>
+      <input type="text" id="f-lugar" placeholder="A pizzaria da esquina">
+      <label for="f-apelido">Apelido carinhoso</label>
+      <input type="text" id="f-apelido" placeholder="Mozão">
+      <label for="f-final">Mensagem final, do fundo do coração</label>
+      <textarea id="f-final" placeholder="Cada dia ao seu lado é o meu lugar favorito no mundo. Te amo!"></textarea>
+    </div>
+
+    <p class="field-error" id="form-error"></p>
+    <button class="btn btn-primary btn-block" id="btn-gerar">Gerar meu link de amor 💘</button>
+    <div id="result"></div>
+    <footer class="builder-footer">
+      Feito com 💗 · Nossa História<br>
+      <a class="ad-pill" href="${CONFIG.AD_URL}" target="_blank" rel="noopener sponsored">
+        <span class="dot"></span> Noite de cinema a dois? Conheça a Flow TV <small>publi</small>
+      </a>
+    </footer>
+  </div>`;
+
+  $('#btn-gerar').addEventListener('click', onGenerate);
+}
+
+function val(id){ return ($('#'+id)?.value||'').trim(); }
+
+function onGenerate(){
+  const err = $('#form-error');
+  err.style.display='none';
+
+  const leadNome = val('f-lead-nome');
+  const leadEmail = val('f-lead-email');
+  const leadTel = val('f-lead-tel');
+  const de = val('f-de'), para = val('f-para'), dt = val('f-data');
+
+  if(!leadNome || !leadEmail || !leadTel){ return showErr('Preencha seu nome, e-mail e telefone para gerar o link.'); }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(leadEmail)){ return showErr('Esse e-mail não parece válido. Confere pra gente?'); }
+  if(leadTel.replace(/\D/g,'').length < 10){ return showErr('Esse telefone parece incompleto. Use DDD + número, ex: (11) 98765-4321.'); }
+  if(!de || !para){ return showErr('Preencha os nomes do casal.'); }
+  if(!dt){ return showErr('Conta pra gente quando tudo começou (a data do casal).'); }
+
+  const quiz = [];
+  for(let n=1;n<=3;n++){
+    const p = val(`f-q${n}p`);
+    const o = [0,1,2].map(i=>val(`f-q${n}o${i}`));
+    const c = parseInt(document.querySelector(`input[name=q${n}c]:checked`).value,10);
+    if(p && o.every(x=>x)) quiz.push({p,o,c});
+  }
+  if(quiz.length===0){ return showErr('Preencha pelo menos 1 pergunta completa do quiz (pergunta + 3 alternativas).'); }
+
+  const data = {
+    de, para, dt,
+    pp: val('f-pedido') || 'Você quer ser meu amor para sempre?',
+    quiz,
+    pr: val('f-premio') || 'Você ganhou todo o meu amor, hoje e sempre. 💖',
+    mu: val('f-musica'), lu: val('f-lugar'), ap: val('f-apelido'),
+    mf: val('f-final') || 'Te amo mais do que as palavras conseguem dizer.'
+  };
+
+  const btn = $('#btn-gerar');
+  btn.disabled = true; btn.textContent = 'Gerando…';
+
+  const base = location.origin + location.pathname;
+  const url = base + '#d=' + enc(data);
+
+  sendLead({
+    lead:{ nome:leadNome, email:leadEmail, telefone:leadTel },
+    presente:{
+      de:data.de, para:data.para, data_inicio:data.dt,
+      pergunta_pedido:data.pp, quiz:data.quiz, premio_raspadinha:data.pr,
+      musica:data.mu, lugar:data.lu, apelido:data.ap, mensagem_final:data.mf
+    },
+    link_gerado:url
+  }).finally(()=>{
+    $('#result').innerHTML = `
+      <div class="card">
+        <h3>Pronto! Seu presente está no ar 🎉</h3>
+        <p class="hint">Copie o link e envie para ${esc(para)}. Tudo fica guardado dentro do próprio link.</p>
+        <div class="link-box" id="link-out">${esc(url)}</div>
+        <p class="copy-feedback" id="copied">Link copiado! Agora é só enviar 💌</p>
+        <div class="row2 mt">
+          <button class="btn btn-primary" id="btn-copy">Copiar link</button>
+          <button class="btn btn-ghost" id="btn-preview">Ver como ficou</button>
+        </div>
+      </div>`;
+    btn.disabled = false; btn.textContent = 'Gerar meu link de amor 💘';
+    $('#result').scrollIntoView({behavior:'smooth'});
+
+    $('#btn-copy').addEventListener('click',()=>{
+      navigator.clipboard.writeText(url).then(()=>{
+        $('#copied').style.display='block';
+      }).catch(()=>{
+        const r=document.createRange(); r.selectNodeContents($('#link-out'));
+        const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      });
+    });
+    $('#btn-preview').addEventListener('click',()=>{
+      location.hash = 'd='+enc(data);
+      startExperience(data);
+      window.scrollTo(0,0);
+    });
+  });
+
+  function showErr(msg){ err.textContent=msg; err.style.display='block'; err.scrollIntoView({behavior:'smooth',block:'center'}); }
+}
+
+/* =====================================================================
+   MODO EXPERIÊNCIA
+===================================================================== */
+let EXP = null;
+
+function startExperience(data){
+  EXP = data;
+  document.title = `Uma surpresa para ${data.para} 💘`;
+  renderProposal();
+}
+
+/* ---------- 1. pedido irrecusável ---------- */
+function renderProposal(){
+  const teases = [
+    'Tem certeza disso? 🥺',
+    'O botão discorda de você.',
+    'Ele é mais rápido, desiste.',
+    'Insistir não vai adiantar…',
+    'O destino já decidiu. 😌',
+    'Só existe uma resposta certa!'
+  ];
+  let escapes = 0;
+
+  app.innerHTML = `
+  <div class="screen proposal">
+    <div id="prop-content">
+      <div class="big-heart">💖</div>
+      <p class="eyebrow">${esc(EXP.de)} preparou algo para você, ${esc(EXP.para)}</p>
+      <h1>${esc(EXP.pp)}</h1>
+      <p class="tease" id="tease"></p>
+      <div class="btn-pair">
+        <button class="btn btn-primary" id="btn-sim">Sim! 💘</button>
+        <button class="btn btn-ghost" id="btn-nao">Não</button>
+      </div>
+    </div>
+  </div>`;
+
+  const propContent = $('#prop-content');
+  propContent.style.display='flex';
+  propContent.style.flexDirection='column';
+  propContent.style.alignItems='center';
+
+  const nao = $('#btn-nao');
+
+  function overlaps(x,y,w,h,r){
+    const m = 16; /* margem de segurança ao redor do texto */
+    return x < r.right + m && x + w > r.left - m && y < r.bottom + m && y + h > r.top - m;
+  }
+
+  function flee(){
+    escapes++;
+    nao.classList.add('flee');
+    const pad = 16, w = nao.offsetWidth, h = nao.offsetHeight;
+    const avoid = propContent.getBoundingClientRect();
+    let x, y, tries = 0;
+    do{
+      x = pad + Math.random()*(innerWidth  - w - pad*2);
+      y = pad + Math.random()*(innerHeight - h - pad*2);
+      tries++;
+    }while(tries < 60 && overlaps(x,y,w,h,avoid));
+    nao.style.left = x+'px';
+    nao.style.top  = y+'px';
+    $('#tease').textContent = teases[Math.min(escapes-1,teases.length-1)];
+  }
+  nao.addEventListener('pointerenter', flee);
+  nao.addEventListener('touchstart', e=>{ e.preventDefault(); flee(); }, {passive:false});
+  nao.addEventListener('click', e=>{ e.preventDefault(); flee(); });
+
+  $('#btn-sim').addEventListener('click', e=>{
+    heartBurst(e.clientX, e.clientY);
+    setTimeout(renderQuiz, 700);
+  });
+}
+
+/* ---------- 2. quiz ---------- */
+function renderQuiz(){
+  let i = 0, score = 0;
+  const total = EXP.quiz.length;
+
+  function question(){
+    const q = EXP.quiz[i];
+    app.innerHTML = `
+    <div class="screen" style="padding-top:8vh">
+      <p class="quiz-progress">Quiz do casal · ${i+1} de ${total}</p>
+      <h2 class="quiz-q">${esc(q.p)}</h2>
+      ${q.o.map((o,idx)=>`<button class="quiz-opt" data-i="${idx}">${esc(o)}</button>`).join('')}
+      <p class="quiz-feedback" id="qf"></p>
+    </div>`;
+    document.querySelectorAll('.quiz-opt').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const pick = +btn.dataset.i;
+        document.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+        if(pick === q.c){
+          btn.classList.add('correct'); score++;
+          $('#qf').textContent = 'Acertou! Vocês se conhecem mesmo. 💞';
+          heartBurst(innerWidth/2, innerHeight/2);
+        }else{
+          btn.classList.add('wrong');
+          document.querySelector(`.quiz-opt[data-i="${q.c}"]`).classList.add('correct');
+          $('#qf').textContent = 'Opa! A resposta certa era essa aí em verde. 😅';
+        }
+        setTimeout(()=>{ i++; i<total ? question() : result(); }, 1600);
+      });
+    });
+  }
+
+  function result(){
+    const msgs = score===total
+      ? 'Conexão nível alma gêmea! 💍'
+      : score >= Math.ceil(total/2)
+        ? 'Quase perfeito — mais um motivo pra ficarem juntos estudando um ao outro. 😉'
+        : 'Hmm… vocês claramente precisam de mais encontros. Que sorte que o amor dá segundas chances! 😄';
+    app.innerHTML = `
+    <div class="screen center" style="padding-top:14vh">
+      <p class="eyebrow">Resultado do quiz</p>
+      <div class="score-big">${score}/${total}</div>
+      <p class="lead" style="margin:18px auto 0">${msgs}</p>
+      <button class="btn btn-primary mt" id="btn-next">Tem mais uma surpresa… 🎁</button>
+    </div>`;
+    $('#btn-next').addEventListener('click', renderScratch);
+  }
+
+  question();
+}
+
+/* ---------- 3. raspadinha ---------- */
+function renderScratch(){
+  app.innerHTML = `
+  <div class="screen center" style="padding-top:8vh">
+    <p class="eyebrow">Raspadinha do amor</p>
+    <h2 style="font-size:clamp(24px,5.6vw,34px)">Raspe com o dedo para revelar 👇</h2>
+    <div class="scratch-wrap" id="sw">
+      <div class="scratch-prize">
+        <span style="font-size:40px">🎁</span>
+        <p class="prize-text">${esc(EXP.pr)}</p>
+      </div>
+      <canvas id="scratch-canvas"></canvas>
+    </div>
+    <div id="scratch-next" style="display:none">
+      <button class="btn btn-primary mt" id="btn-wrap">Ver nossa retrospectiva ✨</button>
+    </div>
+  </div>`;
+
+  const wrap = $('#sw'), canvas = $('#scratch-canvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+
+  requestAnimationFrame(()=>{
+    const r = wrap.getBoundingClientRect();
+    canvas.width = r.width*dpr; canvas.height = r.height*dpr;
+    ctx.scale(dpr,dpr);
+    const g = ctx.createLinearGradient(0,0,r.width,r.height);
+    g.addColorStop(0,'#E8B84B'); g.addColorStop(.5,'#F6DFA0'); g.addColorStop(1,'#B9882B');
+    ctx.fillStyle = g; ctx.fillRect(0,0,r.width,r.height);
+    ctx.fillStyle = 'rgba(60,35,5,.65)';
+    ctx.font = '600 15px Sora, sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('✨ raspe aqui ✨', r.width/2, r.height/2+5);
+    ctx.globalCompositeOperation = 'destination-out';
+  });
+
+  let scratching=false, revealed=false;
+  function scratch(e){
+    if(revealed) return;
+    const r = canvas.getBoundingClientRect();
+    const x = (e.touches?e.touches[0].clientX:e.clientX) - r.left;
+    const y = (e.touches?e.touches[0].clientY:e.clientY) - r.top;
+    ctx.beginPath(); ctx.arc(x,y,26,0,Math.PI*2); ctx.fill();
+  }
+  function checkReveal(){
+    if(revealed) return;
+    const img = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+    let clear=0, step=64;
+    for(let i=3;i<img.length;i+=4*step){ if(img[i]===0) clear++; }
+    if(clear/(img.length/(4*step)) > .45){
+      revealed = true;
+      wrap.classList.add('revealed');
+      heartBurst(innerWidth/2, innerHeight/2.4);
+      $('#scratch-next').style.display='block';
+    }
+  }
+  canvas.addEventListener('pointerdown',e=>{scratching=true;scratch(e);});
+  canvas.addEventListener('pointermove',e=>{if(scratching){scratch(e);}});
+  addEventListener('pointerup',()=>{if(scratching){scratching=false;checkReveal();}});
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();scratching=true;scratch(e);},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();scratch(e);},{passive:false});
+  canvas.addEventListener('touchend',()=>{scratching=false;checkReveal();});
+
+  $('#btn-wrap').addEventListener('click', renderWrapped);
+}
+
+/* ---------- 4. retrospectiva ---------- */
+function renderWrapped(){
+  const start = new Date(EXP.dt + 'T00:00:00');
+  const now = new Date();
+  const days = Math.max(0, Math.floor((now - start)/86400000));
+  const years = Math.floor(days/365);
+  const tempo = years >= 1
+    ? `${years} ano${years>1?'s':''} e ${days - years*365} dias`
+    : `${days} dias`;
+
+  const slides = [
+    {e:'Retrospectiva', big:`${esc(EXP.de)} & ${esc(EXP.para)}`, mid:'A história de vocês, em números e memórias 💘'},
+    {e:'Tempo juntos', big:tempo, mid:'…e contando, sem nenhum bug. ⏳', sub:`Desde ${start.toLocaleDateString('pt-BR')}, são ${days.toLocaleString('pt-BR')} dias de história.`},
+    EXP.mu ? {e:'A trilha sonora', big:'🎵', mid:esc(EXP.mu), sub:'A música que é a cara de vocês.'} : null,
+    EXP.lu ? {e:'Lugar favorito', big:'📍', mid:esc(EXP.lu), sub:'Onde o tempo passa diferente quando estão juntos.'} : null,
+    EXP.ap ? {e:'Modo carinho ativado', big:esc(EXP.ap), mid:'O apelido que só vocês entendem. 🥰'} : null,
+    {e:`De ${esc(EXP.de)} para ${esc(EXP.para)}`, big:'💌', mid:esc(EXP.mf), final:true}
+  ].filter(Boolean);
+
+  let i = 0;
+  function slide(){
+    const s = slides[i];
+    app.innerHTML = `
+    <div class="screen wrapped">
+      <div class="story-bars">${slides.map((_,k)=>`<span class="${k<i?'done':k===i?'active':''}"></span>`).join('')}</div>
+      <div class="wrapped-slide" id="ws">
+        <p class="eyebrow">${s.e}</p>
+        <div class="wrapped-big">${s.big}</div>
+        <div class="wrapped-mid">${s.mid||''}</div>
+        ${s.sub?`<p class="wrapped-sub">${s.sub}</p>`:''}
+        ${s.final?`
+          <div class="made-by">
+            <p>Feito com 💗 por ${esc(EXP.de)} · Dia dos Namorados</p>
+            <button class="btn btn-primary mt" id="btn-cta">Crie o seu também 💘</button><br>
+            <a class="ad-pill" href="${CONFIG.AD_URL}" target="_blank" rel="noopener sponsored">
+              <span class="dot"></span> Comemorem com cinema em casa: Flow TV <small>publi</small>
+            </a>
+          </div>`:''}
+      </div>
+      ${!s.final?'<p class="tap-hint">Toque para continuar</p>':''}
+    </div>`;
+
+    if(s.final){
+      heartBurst(innerWidth/2, innerHeight/3);
+      $('#btn-cta').addEventListener('click', e=>{
+        e.stopPropagation();
+        location.hash='';
+        renderBuilder();
+        window.scrollTo(0,0);
+      });
+    }else{
+      $('#ws').addEventListener('click', ()=>{ i++; slide(); });
+    }
+  }
+  slide();
+}
+
+/* ---------- boot ---------- */
+(function init(){
+  const m = location.hash.match(/#d=(.+)/);
+  if(m){
+    const data = dec(m[1]);
+    if(data && data.de && data.para){ startExperience(data); return; }
+  }
+  renderBuilder();
+})();
+</script>
+</body>
+</html>
