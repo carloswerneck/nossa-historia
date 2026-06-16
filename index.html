@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nossa História · Presente digital para o Dia dos Namorados</title>
+<title>Nossa História · Crie um presente digital para quem você ama</title>
 <meta name="description" content="Crie em 2 minutos um presente digital para quem você ama: pedido irrecusável, quiz do casal, raspadinha surpresa e retrospectiva. Grátis, tudo em um link.">
 <link rel="canonical" href="https://nossahistoria.whatchat.app.br/">
 <meta name="robots" content="index, follow">
@@ -33,7 +33,7 @@
   "@type": "WebApplication",
   "name": "Nossa História",
   "url": "https://nossahistoria.whatchat.app.br/",
-  "description": "Crie um presente digital para o Dia dos Namorados: pedido irrecusável, quiz do casal, raspadinha surpresa e retrospectiva do casal, tudo em um link.",
+  "description": "Crie um presente digital para quem você ama: pedido irrecusável, quiz do casal, raspadinha surpresa e retrospectiva do casal, tudo em um link.",
   "applicationCategory": "EntertainmentApplication",
   "operatingSystem": "Web",
   "inLanguage": "pt-BR",
@@ -220,7 +220,7 @@ footer.builder-footer{margin-top:40px;text-align:center;font-size:12px;color:var
 <main id="app">
   <!-- Conteúdo estático para buscadores; o JS substitui ao carregar -->
   <div class="screen">
-    <p class="eyebrow">Dia dos Namorados</p>
+    <p class="eyebrow">Um presente especial</p>
     <h1 class="hero-title">O presente que nenhuma loja <em>vende</em></h1>
     <p class="lead">Em 2 minutos, você cria uma experiência digital única para quem ama: um pedido impossível de recusar, um quiz da relação, uma raspadinha com surpresa e a retrospectiva de vocês. Tudo dentro de um link — pronto para emocionar hoje.</p>
     <noscript><p class="lead">Ative o JavaScript no navegador para criar e abrir presentes.</p></noscript>
@@ -296,10 +296,10 @@ function heartBurst(x,y){
    MODO CRIADOR
 ===================================================================== */
 function renderBuilder(){
-  document.title = 'Nossa História · Presente digital para o Dia dos Namorados';
+  document.title = 'Nossa História · Presente digital para o Um presente especial';
   app.innerHTML = `
   <div class="screen">
-    <p class="eyebrow">Dia dos Namorados</p>
+    <p class="eyebrow">Um presente especial</p>
     <h1 class="hero-title">O presente que nenhuma loja <em>vende</em></h1>
     <p class="lead">Em 2 minutos, você cria uma experiência digital única para quem ama: um pedido impossível de recusar, um quiz da relação, uma raspadinha com surpresa e a retrospectiva de vocês. Tudo dentro de um link — pronto para emocionar hoje.</p>
 
@@ -420,8 +420,20 @@ function onGenerate(){
   btn.disabled = true; btn.textContent = 'Gerando…';
 
   const base = location.origin + location.pathname;
-  const url = base + '#d=' + enc(data);
 
+  /* salva no servidor para gerar um link curto (#aB3xYz9);
+     se a API falhar, cai no formato antigo com tudo dentro do link */
+  fetch('/api/p', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(j => ({ url: base + '#' + j.id, hash: j.id }))
+  .catch(() => ({ url: base + '#d=' + enc(data), hash: 'd=' + enc(data) }))
+  .then(({url, hash}) => finishGenerate(url, hash));
+
+  function finishGenerate(url, hash){
   sendLead({
     lead:{ nome:leadNome, email:leadEmail, telefone:leadTel },
     presente:{
@@ -434,7 +446,7 @@ function onGenerate(){
     $('#result').innerHTML = `
       <div class="card">
         <h3>Pronto! Seu presente está no ar 🎉</h3>
-        <p class="hint">Copie o link e envie para ${esc(para)}. Tudo fica guardado dentro do próprio link.</p>
+        <p class="hint">Copie o link e envie para ${esc(para)}. A surpresa fica guardada com a gente. 💝</p>
         <div class="link-box" id="link-out">${esc(url)}</div>
         <p class="copy-feedback" id="copied">Link copiado! Agora é só enviar 💌</p>
         <div class="row2 mt">
@@ -454,11 +466,12 @@ function onGenerate(){
       });
     });
     $('#btn-preview').addEventListener('click',()=>{
-      location.hash = 'd='+enc(data);
+      location.hash = hash;
       startExperience(data);
       window.scrollTo(0,0);
     });
   });
+  }
 
   function showErr(msg){ err.textContent=msg; err.style.display='block'; err.scrollIntoView({behavior:'smooth',block:'center'}); }
 }
@@ -686,7 +699,7 @@ function renderWrapped(){
         ${s.sub?`<p class="wrapped-sub">${s.sub}</p>`:''}
         ${s.final?`
           <div class="made-by">
-            <p>Feito com 💗 por ${esc(EXP.de)} · Dia dos Namorados</p>
+            <p>Feito com 💗 por ${esc(EXP.de)} · Um presente especial</p>
             <button class="btn btn-primary mt" id="btn-cta">Crie o seu também 💘</button><br>
             <a class="ad-pill" href="${CONFIG.AD_URL}" target="_blank" rel="noopener sponsored">
               <span class="dot"></span> Comemorem com cinema em casa: Flow TV <small>publi</small>
@@ -713,11 +726,27 @@ function renderWrapped(){
 
 /* ---------- boot ---------- */
 (function init(){
-  const m = location.hash.match(/#d=(.+)/);
-  if(m){
-    const data = dec(m[1]);
+  const h = location.hash.slice(1);
+
+  /* links antigos: #d=<base64 com tudo dentro> */
+  if(h.startsWith('d=')){
+    const data = dec(h.slice(2));
     if(data && data.de && data.para){ startExperience(data); return; }
+    renderBuilder(); return;
   }
+
+  /* links curtos: #aB3xYz9 → busca os dados na API */
+  if(/^[A-Za-z0-9]{6,12}$/.test(h)){
+    fetch('/api/p/'+h)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        if(data && data.de && data.para){ startExperience(data); }
+        else renderBuilder();
+      })
+      .catch(renderBuilder);
+    return;
+  }
+
   renderBuilder();
 })();
 </script>
